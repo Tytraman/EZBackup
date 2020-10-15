@@ -1,0 +1,10 @@
+###############################
+#                             #
+#     Plugin par Tytraman     #
+#                             #
+###############################
+
+# Nombre de ticks entre chaque backup
+# 1 tick = 20 secondes
+# 72000 ticks = 1 heure
+ticks: 72000
