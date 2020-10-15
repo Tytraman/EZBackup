@@ -1,8 +1,12 @@
 name: "EZBackup"
-version: "1.0"
+version: "1.1"
 author: "Tytraman"
 description: "Faire des backups n'a jamais été aussi simple"
 api-version: "1.16"
 load: "STARTUP"
 prefix: "EZBackup"
 main: "no.tytraman.ezbackup.Main"
+
+commands:
+  backup:
+    description: "Suffixe pour les commandes backups"

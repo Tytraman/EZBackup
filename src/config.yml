@@ -1,10 +1,17 @@
-###############################
-#                             #
-#     Plugin par Tytraman     #
-#                             #
-###############################
+############################################
+#                                          #
+#         Plugin par Tytraman              #
+#   https://github.com/Tytraman/EZBackup   #
+#                                          #
+############################################
 
-# Nombre de ticks entre chaque backup
+# Informations :
+# Les backups sont faits de manière asynchrone, c'est à dire sur un thread différent du thread
+# principal, en clair, le serveur ne freezera pas lors d'un backup.
+
+backup-on-startup: true # Défini si au lancement du serveur un backup doit être fait (ne ralenti pas le démarrage)
+
+# Nombre de ticks entre chaque backup, il n'est pas recommandé de mettre une valeur trop basse
 # 1 tick = 20 secondes
 # 72000 ticks = 1 heure
 ticks: 72000
