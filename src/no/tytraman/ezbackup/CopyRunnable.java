@@ -36,7 +36,7 @@ public class CopyRunnable extends BukkitRunnable {
           catch (IOException e) {
             e.printStackTrace();
         }
-        DateTimeFormatter formater = DateTimeFormatter.ofPattern("dd-MM-YYYY HH-mm-ss");
+        DateTimeFormatter formater = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm-ss");
         File output = new File(Main.path + File.separator + formater.format(LocalDateTime.now()));
         System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Lancement d'un backup...");
         copyFiles(Main.root.toFile(), output);

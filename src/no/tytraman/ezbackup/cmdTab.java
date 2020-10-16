@@ -14,7 +14,7 @@ public class cmdTab implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> list = new ArrayList<>();
         if(args.length == 1) {
-            for(String str : new String[]{"now"}) {
+            for(String str : new String[]{"now", "number", "maxbackups", "lastbackup"}) {
                 if(str.startsWith(args[0].toLowerCase())) {
                     list.add(str);
                 }
