@@ -26,6 +26,56 @@ public class CopyRunnable extends BukkitRunnable {
     @Override
     public void run() {
         backup();
+        deleteOldestFiles();
+    }
+
+    private void backup() {
+        try {
+            Files.createDirectory(Main.path);
+        } catch(FileAlreadyExistsException ignore) {}
+          catch (IOException e) {
+            e.printStackTrace();
+        }
+        DateTimeFormatter formater = DateTimeFormatter.ofPattern("dd-MM-YYYY HH-mm-ss");
+        File output = new File(Main.path + File.separator + formater.format(LocalDateTime.now()));
+        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Lancement d'un backup...");
+        copyFiles(Main.root.toFile(), output);
+        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
+        if(sender != null) {
+            sender.sendMessage(ChatColor.GOLD + "[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
+        }
+    }
+
+
+    private void deleteOldestFiles() {
+        int maxBackups = Main.INSTANCE.getConfig().getInt("max-backups");
+        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Max backups: " + maxBackups);
+        File[] saves = Main.path.toFile().listFiles();
+        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backups en tout: " + saves.length);
+        if(saves.length > maxBackups) {
+            int numbers = saves.length - maxBackups;
+            System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Nombre de backups à supprimer: " + numbers);
+            for(int i = 0; i < numbers; i++) {
+                long oldest = Long.MAX_VALUE;
+                File fOldest = null;
+                for(File f : saves) {
+                    if(f.lastModified() < oldest) {
+                        oldest = f.lastModified();
+                        fOldest = f;
+                    }
+                }
+                if(fOldest != null) {
+                    System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup à supprimer: " + fOldest.getName());
+                    deleteRecursively(fOldest);
+                }
+                saves = Main.path.toFile().listFiles();
+            }
+            if(numbers > 1) {
+                System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Les " + numbers + " backups les plus anciens ont été supprimés.");
+            }else {
+                System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Le backup le plus ancien a été supprimé.");
+            }
+        }
     }
 
     private void copyFiles(File source, File output) {
@@ -46,22 +96,17 @@ public class CopyRunnable extends BukkitRunnable {
         }
     }
 
-    private void backup() {
+    private void deleteRecursively(File folder) {
+        if(folder.isDirectory()) {
+            for(String str : folder.list()) {
+                deleteRecursively(new File(folder, str));
+            }
+        }
         try {
-            Files.createDirectory(Main.path);
-        } catch(FileAlreadyExistsException ignore) {}
-          catch (IOException e) {
+            Files.delete(folder.toPath());
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        DateTimeFormatter formater = DateTimeFormatter.ofPattern("dd-MM-YYYY HH-mm-ss");
-        File output = new File(Main.path + File.separator + formater.format(LocalDateTime.now()));
-        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Lancement d'un backup...");
-        copyFiles(Main.root.toFile(), output);
-        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
-        if(sender != null) {
-            sender.sendMessage(ChatColor.GOLD + "[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
-        }
     }
-
 
 }

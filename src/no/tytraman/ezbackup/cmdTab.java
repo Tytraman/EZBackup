@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class cmdTab implements TabCompleter {
@@ -19,6 +20,7 @@ public class cmdTab implements TabCompleter {
                 }
             }
         }
+        Collections.sort(list);
         return list;
     }
 }

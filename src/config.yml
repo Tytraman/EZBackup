@@ -15,3 +15,5 @@ backup-on-startup: true # Défini si au lancement du serveur un backup doit êtr
 # 1 tick = 20 secondes
 # 72000 ticks = 1 heure
 ticks: 72000
+
+max-backups: 10 # Nombre maximum de backups
