@@ -2,7 +2,7 @@
 ## En cours de développement, revenez plus tard...
 
 ### Installation :
-Téléchargez le fichier .jar depuis l'onglet **release** et mettez le dans votre dossier plugins, re/démarrez votre serveur et tada !
+Téléchargez le fichier .jar depuis l'onglet **releases** et mettez le dans votre dossier plugins, re/démarrez votre serveur et tada !
 
 ### Comment ça marche ?
 Ce plugin vous permet de faire des backups automatiques de votre serveur d'une simplicité déconcertante, modifiez le fichier **config.yml** selon vos goûts et... c'est tout, vous n'aurez plus à vous soucier de quoi que ce soit ! La copie des fichiers ce fait de manière **asynchrone**, c'est-à-dire sur un thread **différent** du thread principal, en d'autres termes : les backups ne feront pas laguer/freezer votre serveur, si ça c'est pas génial !
