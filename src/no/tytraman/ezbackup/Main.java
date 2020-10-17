@@ -22,7 +22,7 @@ public class Main extends JavaPlugin {
         getCommand("backup").setExecutor(new cmdBackup());
         getCommand("backup").setTabCompleter(new cmdTab());
         // S'exécute après que le serveur ai fini de se lancer
-        new CopyRunnable().runTaskTimerAsynchronously(this, startup ? 0 : TICKS, TICKS);
+        new CopyRunnable(null).runTaskTimerAsynchronously(this, startup ? 0 : TICKS, TICKS);
     }
 
 }

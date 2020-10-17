@@ -4,21 +4,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class CopyRunnable extends BukkitRunnable {
 
-    private CommandSender sender = null;
+    private final CommandSender sender;
+    private final byte[] BUFFER = new byte[4096];
 
-    public CopyRunnable() {
-
-    }
     public CopyRunnable(CommandSender sender) {
         this.sender = sender;
     }
@@ -37,12 +35,29 @@ public class CopyRunnable extends BukkitRunnable {
             e.printStackTrace();
         }
         DateTimeFormatter formater = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm-ss");
-        File output = new File(Main.path + File.separator + formater.format(LocalDateTime.now()));
+        File output = new File(Main.path + File.separator + formater.format(LocalDateTime.now()) + ".zip");
         System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Lancement d'un backup...");
-        copyFiles(Main.root.toFile(), output);
-        System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
-        if(sender != null) {
-            sender.sendMessage(ChatColor.GOLD + "[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
+        try(ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(output)))) {
+            zip.setMethod(ZipOutputStream.DEFLATED);
+            zip.setLevel(9);
+            zipRecurcively(Main.root.toFile(), zip);
+            System.out.println("[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
+            if(sender != null) {
+                sender.sendMessage(ChatColor.GOLD + "[" + Main.INSTANCE.getDescription().getPrefix() + "] Backup effectué avec succès!");
+            }
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void zipRecurcively(File folder, ZipOutputStream zos) throws IOException {
+        String absolute = folder.getAbsoluteFile().toString();
+        if(folder.isDirectory() && (!absolute.equals(Main.path.toString()) && !absolute.equals(Main.root + File.separator + "logs"))) {
+            for(String f : folder.list()) {
+                zipRecurcively(new File(folder, f), zos);
+            }
+        }else if(folder.isFile()){
+            writeToZip(folder, zos);
         }
     }
 
@@ -78,24 +93,6 @@ public class CopyRunnable extends BukkitRunnable {
         }
     }
 
-    private void copyFiles(File source, File output) {
-        String absolute = source.getAbsoluteFile().toString();
-        if(source.isDirectory() && (!absolute.equals(Main.path.toString()) && !absolute.equals(Main.root + File.separator + "logs"))) {
-            output.mkdirs();
-            for(String str : source.list()) {
-                copyFiles(new File(source, str), new File(output, str));
-            }
-        }else if(source.isFile()) {
-            try {
-                Files.copy(source.toPath(), output.toPath());
-            } catch(FileSystemException e) {
-                System.out.println(e.getMessage());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void deleteRecursively(File folder) {
         if(folder.isDirectory()) {
             for(String str : folder.list()) {
@@ -108,5 +105,18 @@ public class CopyRunnable extends BukkitRunnable {
             e.printStackTrace();
         }
     }
+
+    private void writeToZip(File file, ZipOutputStream zos) throws IOException {
+        BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
+        ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(Main.root.toString(), ""));
+        zos.putNextEntry(entry);
+        int length;
+        while((length = reader.read(BUFFER)) >= 0) {
+            zos.write(BUFFER, 0, length);
+        }
+        zos.closeEntry();
+        reader.close();
+    }
+
 
 }
