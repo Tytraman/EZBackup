@@ -1,5 +1,4 @@
 # EZBackup
-## En cours de développement, revenez plus tard...
 
 ### Installation :
 Téléchargez le fichier .jar depuis l'onglet **releases** et mettez le dans votre dossier plugins, re/démarrez votre serveur et tada !
