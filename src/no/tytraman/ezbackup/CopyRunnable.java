@@ -108,11 +108,15 @@ public class CopyRunnable extends BukkitRunnable {
 
     private void writeToZip(File file, ZipOutputStream zos) throws IOException {
         BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
-        ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(Main.root.toString(), ""));
+        ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(Main.root.toString() + File.separator, "").replace("\\", "/"));
         zos.putNextEntry(entry);
         int length;
-        while((length = reader.read(BUFFER)) >= 0) {
-            zos.write(BUFFER, 0, length);
+        try {
+            while((length = reader.read(BUFFER)) >= 0) {
+                zos.write(BUFFER, 0, length);
+            }
+        }catch (IOException e) {
+            System.out.println(e.getMessage());
         }
         zos.closeEntry();
         reader.close();
